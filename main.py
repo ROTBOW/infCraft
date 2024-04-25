@@ -1,19 +1,14 @@
-from time import sleep
-
 from selenium import webdriver
-# from selenium.common.exceptions import MoveTargetOutOfBoundsException
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.options import Options
 
 options = Options()
 options.binary_location = r"C:\\Program Files\\Mozilla Firefox\\firefox.exe"
-# options.add_argument('-headless')
+
 
 
 # constants
-
 SITE = r"https://neal.fun/infinite-craft/"
 
 
@@ -29,16 +24,24 @@ class Asphodel:
         self.items = self.driver.find_elements(By.CSS_SELECTOR, 'div.items-inner div.item')
         
     def open_site(self) -> None:
+        """
+        This function opens the inf craft site, finds the center and clear elements
+        """
         self.driver.get(SITE)
         
         # get element center
         self.center = self.driver.find_element(By.CLASS_NAME, 'container')
         # get the clear button
         self.clear = self.driver.find_element(By.CLASS_NAME, 'clear')
-        # get search that can be mixed
-        self.search = self.driver.find_element(By.CLASS_NAME, 'sidebar-input')
         
-    def drag_item(self, item) -> None: # this still isn't working when an item is out of the viewport
+    def drag_item(self, item) -> None:
+        """
+        The `drag_item` function attempts to drag an item to a specific location on a webpage using
+        ActionChains in Python, scrolling into view if necessary.
+        
+        :param item: The `item` parameter in the `drag_item` method is a web element that you
+        want to drag and drop to a specific location on a web page.
+        """
         while True:
             try:
                 ActionChains(self.driver)\
@@ -46,13 +49,13 @@ class Asphodel:
                     .perform()
                 break
             except:
-                ActionChains(self.driver)\
-                    .send_keys_to_element(self.search, item.text[2:].strip())\
-                    .perform()
-            finally:
-                self.search.clear()
+                self.driver.execute_script('arguments[0].scrollIntoView()', item)
             
     def gen_stack(self) -> list[tuple]:
+        """
+        This function generates a list of unique tuples by combining items from a given list.
+        :return: A list of tuples is being returned.
+        """
         self.__get_items()
         new_stack = list()
         
@@ -66,6 +69,10 @@ class Asphodel:
         return new_stack  
         
     def main(self) -> None:
+        """
+        This function opens the site, generates a stack of items to mix, mixes the items, clears the mix,
+        and keeps track of the number of mixes tried and items found, continuing until it has tried all combinations
+        """
         self.open_site()
         
         while True:
