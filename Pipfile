@@ -5,9 +5,9 @@ name = "pypi"
 
 [packages]
 selenium = "*"
-isort = "*"
 
 [dev-packages]
+isort = "*"
 
 [requires]
 python_version = "3.10"
