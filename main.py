@@ -1,3 +1,6 @@
+from datetime import timedelta
+from time import time
+
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
@@ -75,17 +78,20 @@ class Asphodel:
         """
         self.open_site()
         
+        start = time()
+        
         while True:
             stack = self.gen_stack()
             
             if not stack:
                 break
             
-            print(f'current stack has {len(stack)} mixes to try!')
+            n = len(stack)
+            print(f'current stack has {n} mixes to try!')
             
             while stack:
                 items = stack.pop()
-                print(f'Mixing {items[0].text} and {items[1].text}')
+                print(f'Mixing {items[0].text} and {items[1].text} - ({n - len(stack)}/{n})')
                 for item in items:
                     self.drag_item(item)
                 self.clear.click()
@@ -94,7 +100,7 @@ class Asphodel:
         print()
         print(f'Tried {len(self.mixes)} diffrent combos!')
         print(f'found {len(self.items)} items!')
-        
+        print(f'\nTotal Time to complete: {timedelta(seconds=time()-start)}s')
         
 if __name__ == '__main__':
     dell = Asphodel()
